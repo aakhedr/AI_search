@@ -87,6 +87,7 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
+    # keep track of the visited nodes
     closed = set()
     # fringe is a stack data stucture containing lists (i.e. paths) of triples
     fringe = util.Stack()
@@ -100,7 +101,33 @@ def depthFirstSearch(problem):
         node, action, cost = path[-1]           # cost irrelevant
 
         if problem.isGoalState(node):
-            return [aTuple[1] for aTuple in path][1:]     # first action is ''
+            # return the actions inside the tirples 
+            return [successor[1] for successor in path if successor[1] != ''] 
+
+        if node not in closed:
+            # don't visit that node again
+            closed.add(node)
+            for successor in problem.getSuccessors(node):
+                # add each successor to the path 
+                new_path = path + [successor]
+                # hence add the new path(s) to the fringe
+                fringe.push(new_path)
+
+
+def breadthFirstSearch(problem):
+    """Search the shallowest nodes in the search tree first."""
+    "*** YOUR CODE HERE ***"
+    closed = set()
+    fringe = util.Queue()
+    init_path = [(problem.getStartState(), '', 0)]
+    fringe.push(init_path)
+
+    while not fringe.isEmpty():
+        path = fringe.pop()
+        node, action, cost = path[-1]
+
+        if problem.isGoalState(node):
+            return [successor[1] for successor in path if successor[1] != ''] 
 
         if node not in closed:
             closed.add(node)
@@ -108,11 +135,6 @@ def depthFirstSearch(problem):
                 new_path = path + [successor]
                 fringe.push(new_path)
 
-
-def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
