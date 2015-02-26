@@ -98,7 +98,7 @@ def depthFirstSearch(problem):
 
     while not fringe.isEmpty():
         path = fringe.pop()                     # Last in First out
-        node, action, cost = path[-1]           # cost irrelevant
+        node, _, _ = path[-1]                   # cost/ action irrelevant
 
         if problem.isGoalState(node):
             # return the actions inside the tirples 
@@ -124,7 +124,7 @@ def breadthFirstSearch(problem):
 
     while not fringe.isEmpty():
         path = fringe.pop()
-        node, action, cost = path[-1]
+        node, _, _ = path[-1]
 
         if problem.isGoalState(node):
             return [successor[1] for successor in path if successor[1] != ''] 
@@ -139,7 +139,28 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = set()
+    fringe = util.PriorityQueue()
+    init_path = [(problem.getStartState(), '', 0)]
+    fringe.push(init_path, 0)       # initial cost is zero
+
+    while not fringe.isEmpty():
+        path = fringe.pop()
+        node, _, _ = path[-1]
+
+        if problem.isGoalState(node):
+            return [successor[1] for successor in path if successor[1] != '']
+
+        if node not in closed:
+            closed.add(node)
+            for successor in problem.getSuccessors(node):
+                new_path = path + [successor]
+                # increment path costs in cum_cost
+                cum_cost = 0
+                for node in new_path:
+                    cum_cost += node[2]
+                fringe.push(new_path, cum_cost)
+
 
 def nullHeuristic(state, problem=None):
     """
