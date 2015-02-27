@@ -61,7 +61,6 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
-
 def tinyMazeSearch(problem):
     """
     Returns a sequence of moves that solves tinyMaze.  For any other maze, the
@@ -98,11 +97,11 @@ def depthFirstSearch(problem):
 
     while not fringe.isEmpty():
         path = fringe.pop()                     # Last in First out
-        node, _, _ = path[-1]                   # cost/ action irrelevant
+        node, _, _ = path[-1]                   # action/ cost irrelevant
 
         if problem.isGoalState(node):
             # return the actions inside the tirples 
-            return [successor[1] for successor in path if successor[1] != ''] 
+            return [successor[1] for successor in path if successor[1] != '']
 
         if node not in closed:
             # don't visit that node again
@@ -112,7 +111,7 @@ def depthFirstSearch(problem):
                 new_path = path + [successor]
                 # hence add the new path(s) to the fringe
                 fringe.push(new_path)
-
+    return []
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
@@ -127,14 +126,14 @@ def breadthFirstSearch(problem):
         node, _, _ = path[-1]
 
         if problem.isGoalState(node):
-            return [successor[1] for successor in path if successor[1] != ''] 
+            return [successor[1] for successor in path if successor[1] != '']
 
         if node not in closed:
             closed.add(node)
             for successor in problem.getSuccessors(node):
                 new_path = path + [successor]
                 fringe.push(new_path)
-
+    return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
@@ -155,11 +154,9 @@ def uniformCostSearch(problem):
             closed.add(node)
             for successor in problem.getSuccessors(node):
                 new_path = path + [successor]
-                # increment path costs in cum_cost
-                cum_cost = 0
-                for node in new_path:
-                    cum_cost += node[2]
-                fringe.push(new_path, cum_cost)
+                actions = [successor[1] for successor in new_path if successor[1] != '']
+                fringe.push(new_path, problem.getCostOfActions(actions))
+    return []
 
 
 def nullHeuristic(state, problem=None):
@@ -172,8 +169,28 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    closed = set()
+    state = problem.getStartState()
+    fringe = util.PriorityQueue()
 
+    init_path = [(state, '', 0)]
+    fringe.push(init_path, 0)
+
+    while not fringe.isEmpty():
+        path = fringe.pop()
+        node, _, _ = path[-1]
+
+        if problem.isGoalState(node):
+            return [successor[1] for successor in path if successor[1] != '']
+
+        if node not in closed:
+            closed.add(node)
+            for successor in problem.getSuccessors(node):
+                new_path = path + [successor]
+                actions = [successor[1] for successor in new_path if successor[1] != '']
+                tot_cost = heuristic(successor[0], problem) + problem.getCostOfActions(actions)
+                fringe.push(new_path, tot_cost)
+    return []
 
 # Abbreviations
 bfs = breadthFirstSearch
