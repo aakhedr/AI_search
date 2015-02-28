@@ -303,7 +303,7 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        node, isGoal = state
+        _, isGoal = state
         return isGoal == (True, True, True, True)
 
     def getSuccessors(self, state):
@@ -372,10 +372,10 @@ def cornersHeuristic(state, problem):
     "*** YOUR CODE HERE ***"
     (x, y), isGoal = state
     distances = []
-    
     for corner in corners:
         if not isGoal[corners.index(corner)]:
             distances.append(abs(x - corner[0]) + abs(y - corner[1]))
+    
     if len(distances) == 0:
         return 0
     return max(distances)
@@ -472,7 +472,25 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    foodDots = foodGrid.asList()
+    nearestDotToPos = []
+    for dot in foodDots:
+        # mazeDistance (better score only)
+        nearestDotToPos.append(mazeDistance(position, dot, problem.startingGameState))
+        # Eucledian distance (more real life as mazeDistance uses bfs)
+        # nearestDotToPos.append(abs(position[0] - dot[0]) + abs(position[1] - dot[1]))
+        
+    FurthestDotToDot = []
+    for dot1 in foodDots:
+        for dot2 in foodDots:
+            # mazeDistance (better score only)
+            FurthestDotToDot.append(mazeDistance(dot1, dot2, problem.startingGameState))
+            # Eucledian distance (more real life as mazeDistance uses bfs)
+            # FurthestDotToDot.append(abs(dot1[0] - dot2[0]) + abs(dot1[1] - dot2[1]))
+
+    if len(nearestDotToPos) + len(FurthestDotToDot) == 0:
+        return 0
+    return min(nearestDotToPos) + max(FurthestDotToDot)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
