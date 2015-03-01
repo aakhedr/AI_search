@@ -374,7 +374,7 @@ def cornersHeuristic(state, problem):
     distances = []
     for corner in corners:
         if not isGoal[corners.index(corner)]:
-            distances.append(abs(x - corner[0]) + abs(y - corner[1]))
+            distances.append(util.manhattanDistance((x,y), corner))
     
     if len(distances) == 0:
         return 0
@@ -473,24 +473,24 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
     foodDots = foodGrid.asList()
-    nearestDotToPos = []
+    dotToPos = []
     for dot in foodDots:
         # mazeDistance (better score only)
-        nearestDotToPos.append(mazeDistance(position, dot, problem.startingGameState))
-        # Eucledian distance (more real life as mazeDistance uses bfs)
-        # nearestDotToPos.append(abs(position[0] - dot[0]) + abs(position[1] - dot[1]))
-        
-    FurthestDotToDot = []
+        dotToPos.append(mazeDistance(position, dot, problem.startingGameState))
+        # Manhattan distance (more real life as mazeDistance uses bfs)
+        # dotToPos.append(util.manhattanDistance(position, dot))
+
+    dotToDot = []
     for dot1 in foodDots:
         for dot2 in foodDots:
             # mazeDistance (better score only)
-            FurthestDotToDot.append(mazeDistance(dot1, dot2, problem.startingGameState))
-            # Eucledian distance (more real life as mazeDistance uses bfs)
-            # FurthestDotToDot.append(abs(dot1[0] - dot2[0]) + abs(dot1[1] - dot2[1]))
+            dotToDot.append(mazeDistance(dot1, dot2, problem.startingGameState))
+            # Manhattan distance (more real life as mazeDistance uses bfs)
+            # dotToDot.append(util.manhattanDistance(dot1, dot2))
 
-    if len(nearestDotToPos) + len(FurthestDotToDot) == 0:
+    if len(dotToPos) + len(dotToDot) == 0:
         return 0
-    return min(nearestDotToPos) + max(FurthestDotToDot)
+    return min(dotToPos) + max(dotToDot)
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -521,7 +521,7 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return search.bfs(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -557,7 +557,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y]
 
 def mazeDistance(point1, point2, gameState):
     """
