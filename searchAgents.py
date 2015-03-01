@@ -475,15 +475,16 @@ def foodHeuristic(state, problem):
     foodDots = foodGrid.asList()
     dotToPos = []
     for dot in foodDots:
-        # mazeDistance with caching in heuristicInfo dict
         if dot == position:
             dotToPos.append(0)
-        elif (dot, position) in problem.heuristicInfo.keys():
-            dotToPos.append(problem.heuristicInfo[(dot, position)])
         else:
-            dist = mazeDistance(position, dot, problem.startingGameState)
-            dotToPos.append(dist)
-            problem.heuristicInfo[(dot, position)] = dist
+            # mazeDistance with caching in heuristicInfo dict
+            try:
+                dotToPos.append(problem.heuristicInfo[(dot, position)])
+            except KeyError:
+                dist = mazeDistance(position, dot, problem.startingGameState)
+                dotToPos.append(dist)
+                problem.heuristicInfo[(dot, position)] = dist
 
     dotToDot = []
     for i in range(len(foodDots)):
@@ -492,9 +493,9 @@ def foodHeuristic(state, problem):
                 dotToDot.append(0)                
             elif i > j:
                 # mazeDistance with caching in heuristicInfo dict
-                if (foodDots[i], foodDots[j]) in problem.heuristicInfo.keys():
+                try:
                     dotToDot.append(problem.heuristicInfo[(foodDots[i], foodDots[j])])
-                else:
+                except KeyError:
                     dist = mazeDistance(foodDots[i], foodDots[j], problem.startingGameState)
                     dotToDot.append(dist)
                     problem.heuristicInfo[(foodDots[i], foodDots[j])] = dist
