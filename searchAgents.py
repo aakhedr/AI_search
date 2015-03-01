@@ -476,16 +476,29 @@ def foodHeuristic(state, problem):
     dotToPos = []
     for dot in foodDots:
         # mazeDistance (better score only)
-        dotToPos.append(mazeDistance(position, dot, problem.startingGameState))
-        # Manhattan distance (more real life as mazeDistance uses bfs)
+        if (dot, position) in problem.heuristicInfo.keys():
+            dotToPos.append(problem.heuristicInfo[(dot, position)])
+        else:
+            dist = mazeDistance(position, dot, problem.startingGameState)
+            dotToPos.append(dist)
+            problem.heuristicInfo[(dot, position)] = dist
+        # Manhattan distance
         # dotToPos.append(util.manhattanDistance(position, dot))
 
     dotToDot = []
     for dot1 in foodDots:
         for dot2 in foodDots:
             # mazeDistance (better score only)
-            dotToDot.append(mazeDistance(dot1, dot2, problem.startingGameState))
-            # Manhattan distance (more real life as mazeDistance uses bfs)
+            if (dot1, dot2) in problem.heuristicInfo.keys():
+                dotToDot.append(problem.heuristicInfo[(dot1, dot2)])
+            elif (dot2, dot1) in problem.heuristicInfo.keys():
+                dotToDot.append(problem.heuristicInfo[(dot2, dot1)])
+            else:
+                dist = mazeDistance(dot1, dot2, problem.startingGameState)
+                dotToDot.append(dist)
+                problem.heuristicInfo[(dot1, dot2)] = dist
+
+            # Manhattan distance
             # dotToDot.append(util.manhattanDistance(dot1, dot2))
 
     if len(dotToPos) + len(dotToDot) == 0:
