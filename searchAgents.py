@@ -491,7 +491,7 @@ def foodHeuristic(state, problem):
         for j in range(len(foodDots)):
             if i == j:
                 dotToDot.append(0)                
-            elif i > j:
+            elif i < j:
                 # mazeDistance with caching in heuristicInfo dict
                 try:
                     dotToDot.append(problem.heuristicInfo[(foodDots[i], foodDots[j])])
